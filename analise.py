@@ -32,8 +32,11 @@ print(f"Valor total orçado: R$ {orcamentos['valor'].sum():,.2f}")
 # PARTE 2: valor total e média por produto (janela, porta, painel)
 # ---------------------------------------------------------------
 resumo_produto = orcamentos.groupby("produto")["valor"].agg(["sum", "mean", "count"])
-print("===Valor total e média===")
-print(resumo_produto)
+print("\n ===Valor total e média por produto=== ")
+for produto, valor in resumo_produto.iterrows():
+    print(f"{produto:<8}   total: R$ {valor['sum']:>9,.2f}    média: R$ {valor['mean']:>6,.2f}")
+
+
 
 
 # ---------------------------------------------------------------
