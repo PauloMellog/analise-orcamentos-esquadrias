@@ -1,0 +1,25 @@
+id,data,cliente,produto,largura_m,altura_m,tipo_vidro,preco_m2,status
+1,2026-08-03,Cliente A,janela,1.20,1.00,comum,180,aprovado
+2,2026-08-05,Cliente B,porta,0.90,2.10,temperado,320,aprovado
+3,2026-08-07,Cliente C,painel,2.00,2.40,laminado,420,recusado
+4,2026-08-12,Cliente D,janela,1.50,1.20,temperado,320,aprovado
+5,2026-08-14,Cliente E,porta,0.80,2.10,comum,180,recusado
+6,2026-08-19,Cliente F,painel,3.00,2.50,temperado,320,aprovado
+7,2026-08-21,Cliente G,janela,1.00,1.00,comum,180,pendente
+8,2026-08-26,Cliente H,porta,1.00,2.20,laminado,420,aprovado
+9,2026-08-28,Cliente I,janela,2.00,1.20,temperado,320,recusado
+10,2026-09-02,Cliente J,painel,2.50,2.20,laminado,420,aprovado
+11,2026-09-04,Cliente K,janela,1.20,1.10,comum,180,aprovado
+12,2026-09-09,Cliente L,porta,0.90,2.10,temperado,320,aprovado
+13,2026-09-11,Cliente M,painel,1.80,2.00,comum,180,recusado
+14,2026-09-16,Cliente N,janela,1.60,1.30,laminado,420,aprovado
+15,2026-09-18,Cliente O,porta,1.10,2.30,temperado,320,pendente
+16,2026-09-23,Cliente P,painel,3.20,2.60,laminado,420,aprovado
+17,2026-09-25,Cliente Q,janela,0.80,0.60,comum,180,aprovado
+18,2026-09-30,Cliente R,porta,0.90,2.10,comum,180,aprovado
+19,2026-10-02,Cliente S,janela,1.80,1.40,temperado,320,recusado
+20,2026-10-07,Cliente T,painel,2.20,2.40,temperado,320,aprovado
+21,2026-10-09,Cliente U,porta,1.00,2.10,laminado,420,aprovado
+22,2026-10-14,Cliente V,janela,1.40,1.20,comum,180,pendente
+23,2026-10-16,Cliente W,painel,2.80,2.50,comum,180,recusado
+24,2026-10-21,Cliente X,janela,2.00,1.50,laminado,420,aprovado
