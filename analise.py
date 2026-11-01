@@ -22,9 +22,9 @@ orcamentos = pd.read_csv("orcamentos.csv", parse_dates=["data"])
 orcamentos["area_m2"] = orcamentos["largura_m"] * orcamentos["altura_m"]
 orcamentos["valor"] = orcamentos["area_m2"] * orcamentos["preco_m2"]
 
-print("=== Primeiras linhas ===")
+print("===Primeiras linhas===")
 print(orcamentos.head())
-print("\n === Resumo geral ===")
+print("\n ===Resumo geral===")
 print(f"Total de orçamentos: {len(orcamentos)}")
 print(f"Valor total orçado: R$ {orcamentos['valor'].sum():,.2f}")
 
@@ -56,10 +56,23 @@ for tipo_vidro, aprovados in aprovacao_tipos.items():
 # ---------------------------------------------------------------
 # PARTE 4: valor orçado por mês
 # ---------------------------------------------------------------
-# TODO: calcular o valor orçado no mês
-
-
+print("===Valor orçado no mês===")
+valor_mes = orcamentos.groupby(orcamentos["data"].dt.to_period("M"))["valor"].sum()
+for data, valor in valor_mes.items():
+    print(f"{data}  R$ {valor:.2f}")
+ 
 # ---------------------------------------------------------------
 # PARTE 5: um gráfico (salve como grafico.png e coloque no README)
 # ---------------------------------------------------------------
 # TODO: plotar o gráfico de barras do valor orçado e gerar um png.
+import matplotlib.pyplot as plt
+
+valor_mes.plot(kind="bar", color="steelblue")
+plt.title("Valores orçados por mês")
+plt.xlabel("Mês")
+plt.ylabel("Valor (R$)")
+plt.xticks(rotation=0)
+plt.tight_layout()
+plt.savefig("grafico.png")
+plt.show()
+
