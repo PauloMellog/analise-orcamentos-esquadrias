@@ -64,7 +64,6 @@ for data, valor in valor_mes.items():
 # ---------------------------------------------------------------
 # PARTE 5: um gráfico (salve como grafico.png e coloque no README)
 # ---------------------------------------------------------------
-# TODO: plotar o gráfico de barras do valor orçado e gerar um png.
 import matplotlib.pyplot as plt
 
 valor_mes.plot(kind="bar", color="steelblue")
