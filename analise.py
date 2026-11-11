@@ -75,3 +75,11 @@ plt.tight_layout()
 plt.savefig("grafico.png")
 plt.show()
 
+# ---------------------------------------------------------------
+# PARTE 6: Jogando os Dados no SQLite
+# ---------------------------------------------------------------
+import sqlite3
+
+conn = sqlite3.connect("orcamentos.db")
+
+orcamentos.to_sql("orcamentos", conn, if_exists="replace", index=False)
