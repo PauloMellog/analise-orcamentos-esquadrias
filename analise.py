@@ -62,7 +62,7 @@ for data, valor in valor_mes.items():
     print(f"{data}  R$ {valor:.2f}")
  
 # ---------------------------------------------------------------
-# PARTE 5: um gráfico (salve como grafico.png e coloque no README)
+# PARTE 5: um gráfico
 # ---------------------------------------------------------------
 import matplotlib.pyplot as plt
 
