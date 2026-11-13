@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análise de orçamentos de esquadrias</title>
+  <meta name="description" content="Painel de análise de orçamentos de esquadrias feito com Python e pandas.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect x='3' y='3' width='34' height='34' fill='%230B2545' stroke='%232F80ED' stroke-width='3'/><line x1='20' y1='3' x2='20' y2='37' stroke='%238D99AE' stroke-width='2'/></svg>">
+  <style>
+/* ============================================================
+   Identidade visual: vidro + alumínio
+   Para trocar o visual do projeto inteiro, mude só estas cores.
+   ============================================================ */
+:root {
+  --azul-escuro: #0B2545;
+  --azul-vidro:  #2F80ED;
+  --aluminio:    #8D99AE;
+  --cinza-claro: #EDF2F4;
+  --branco:      #FFFFFF;
+  --laranja:     #F2994A;
+  --texto:       #1B2733;
+  --texto-suave: #5A6472;
+  --borda:       #D5DBE1;
+  --verde-bg:    #DDF3E4;  --verde-tx: #1E6B3A;
+  --ambar-bg:    #FDEBD3;  --ambar-tx: #8A4B0C;
+  --verm-bg:     #FBE0E0;  --verm-tx:  #8E2A2A;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--cinza-claro);
+  color: var(--texto);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Cabeçalho ---------- */
+.topo { background: var(--azul-escuro); color: var(--branco); padding: 32px 24px; }
+.topo-conteudo { max-width: 980px; margin: 0 auto; display: flex; align-items: center; gap: 18px; }
+.topo svg { flex-shrink: 0; }
+.topo h1 { font-size: 1.6rem; font-weight: 600; line-height: 1.2; }
+.topo p  { color: #B5C7E0; font-size: 0.95rem; margin-top: 4px; }
+
+/* ---------- Layout ---------- */
+main { max-width: 980px; margin: 0 auto; padding: 24px 16px 40px; }
+section { margin-bottom: 24px; }
+.cartao { background: var(--branco); border-radius: 12px; padding: 20px; }
+.cartao h2 { font-size: 1rem; font-weight: 600; color: var(--azul-escuro); margin-bottom: 4px; }
+.cartao .sub { font-size: 0.85rem; color: var(--texto-suave); margin-bottom: 16px; }
+.grade-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+
+/* ---------- Indicadores ---------- */
+.indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.indicador { background: var(--branco); border-radius: 12px; padding: 16px 18px; border-top: 3px solid var(--azul-vidro); }
+.indicador .rotulo { font-size: 0.8rem; color: var(--texto-suave); }
+.indicador .valor  { font-size: 1.7rem; font-weight: 600; color: var(--azul-escuro); line-height: 1.2; }
+.indicador .nota   { font-size: 0.78rem; color: var(--texto-suave); margin-top: 2px; }
+
+/* ---------- Barras horizontais ---------- */
+.barra-linha { display: grid; grid-template-columns: 110px 1fr 120px; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 0.88rem; }
+.barra-trilho { background: var(--cinza-claro); border-radius: 4px; height: 22px; overflow: hidden; }
+.barra { height: 100%; background: var(--azul-vidro); border-radius: 4px; }
+.barra.destaque { background: var(--laranja); }
+.barra-valor { text-align: right; font-weight: 500; }
+.barra-rotulo { text-transform: capitalize; }
+
+/* ---------- Barras verticais (meses) ---------- */
+.colunas { display: flex; align-items: flex-end; justify-content: space-around; gap: 16px; height: 220px; padding-top: 8px; border-bottom: 1px solid var(--borda); }
+.coluna { flex: 1; max-width: 110px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.coluna .num { font-size: 0.82rem; font-weight: 500; margin-bottom: 4px; }
+.coluna .pilar { width: 100%; background: var(--azul-vidro); border-radius: 4px 4px 0 0; }
+.coluna .pilar.destaque { background: var(--laranja); }
+.nomes-meses { display: flex; justify-content: space-around; gap: 16px; padding-top: 6px; font-size: 0.85rem; color: var(--texto-suave); }
+.nomes-meses span { flex: 1; max-width: 110px; text-align: center; }
+
+/* ---------- Conclusões ---------- */
+.conclusoes { list-style: none; }
+.conclusoes li { padding: 10px 0 10px 16px; border-left: 3px solid var(--azul-vidro); margin-bottom: 8px; background: var(--cinza-claro); border-radius: 0 8px 8px 0; font-size: 0.93rem; }
+
+/* ---------- Tabela ---------- */
+.tabela-rolagem { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+th { text-align: left; font-weight: 500; font-size: 0.78rem; color: var(--texto-suave); padding: 8px 10px; border-bottom: 1px solid var(--borda); white-space: nowrap; }
+td { padding: 9px 10px; border-bottom: 1px solid #EEF1F4; white-space: nowrap; }
+td.num, th.num { text-align: right; }
+.selo { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 0.78rem; font-weight: 500; }
+.selo.aprovado { background: var(--verde-bg); color: var(--verde-tx); }
+.selo.pendente { background: var(--ambar-bg); color: var(--ambar-tx); }
+.selo.recusado { background: var(--verm-bg);  color: var(--verm-tx); }
+#busca { width: 100%; max-width: 260px; padding: 7px 12px; border: 1px solid var(--borda); border-radius: 8px; font-size: 0.88rem; margin-bottom: 12px; }
+#busca:focus { outline: 2px solid var(--azul-vidro); border-color: transparent; }
+
+/* ---------- Rodapé ---------- */
+footer { text-align: center; font-size: 0.82rem; color: var(--texto-suave); padding: 0 16px 32px; }
+footer a { color: var(--azul-vidro); text-decoration: none; margin: 0 6px; }
+footer a:hover { text-decoration: underline; }
+
+/* ---------- Celular ---------- */
+@media (max-width: 600px) {
+  .topo h1 { font-size: 1.25rem; }
+  .barra-linha { grid-template-columns: 80px 1fr 90px; font-size: 0.8rem; }
+}
+
+  </style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="topo-conteudo">
+    <svg width="48" height="48" viewBox="0 0 40 40" role="img" aria-label="Logo: esquadria com reflexo de vidro">
+      <rect x="3" y="3" width="34" height="34" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+      <line x1="20" y1="3" x2="20" y2="37" stroke="#8D99AE" stroke-width="2"/>
+      <polygon points="7,31 15,7 19,7 11,31" fill="#2F80ED"/>
+    </svg>
+    <div>
+      <h1>Análise de orçamentos de esquadrias</h1>
+      <p>O que 24 orçamentos mostram sobre produtos, aprovação e evolução mensal</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="indicadores" aria-label="Indicadores principais">
+    <div class="indicador"><div class="rotulo">Total orçado</div><div class="valor">R$ 23.592,20</div><div class="nota">Ago/2026 a Out/2026</div></div>
+    <div class="indicador"><div class="rotulo">Orçamentos</div><div class="valor">24</div><div class="nota">3 pendentes</div></div>
+    <div class="indicador"><div class="rotulo">Ticket médio</div><div class="valor">R$ 983,01</div><div class="nota">por orçamento</div></div>
+    <div class="indicador"><div class="rotulo">Taxa de aprovação</div><div class="valor">62,5%</div><div class="nota">pendentes contam como não aprovados</div></div>
+  </section>
+
+  <section class="cartao">
+    <h2>Principais conclusões</h2>
+    <p class="sub">Geradas automaticamente a partir dos dados.</p>
+    <ul class="conclusoes">
+      <li><strong>Painéis</strong> somam 58,6% do valor total (R$ 13.818,00), com apenas 7 orçamentos.</li>
+      <li>Vidro <strong>laminado</strong> tem a maior aprovação (85,7%); o <strong>comum</strong> tem a menor (44,4%).</li>
+      <li><strong>Setembro</strong> foi o mês de maior valor orçado (R$ 9.404,60).</li>
+    </ul>
+  </section>
+
+  <section class="grade-2">
+    <div class="cartao">
+      <h2>Valor orçado por produto</h2>
+      <p class="sub">Soma dos orçamentos de cada tipo.</p>
+      <div class="barra-linha"><span class="barra-rotulo">painel</span><div class="barra-trilho"><div class="barra destaque" style="width:100.0%"></div></div><span class="barra-valor">R$ 13.818,00</span></div>
+      <div class="barra-linha"><span class="barra-rotulo">janela</span><div class="barra-trilho"><div class="barra" style="width:38.4%"></div></div><span class="barra-valor">R$ 5.306,40</span></div>
+      <div class="barra-linha"><span class="barra-rotulo">porta</span><div class="barra-trilho"><div class="barra" style="width:32.3%"></div></div><span class="barra-valor">R$ 4.467,80</span></div>
+    </div>
+    <div class="cartao">
+      <h2>Aprovação por tipo de vidro</h2>
+      <p class="sub">% de orçamentos aprovados.</p>
+      <div class="barra-linha"><span class="barra-rotulo">laminado</span><div class="barra-trilho"><div class="barra destaque" style="width:85.7%"></div></div><span class="barra-valor">85,7%</span></div>
+      <div class="barra-linha"><span class="barra-rotulo">temperado</span><div class="barra-trilho"><div class="barra" style="width:62.5%"></div></div><span class="barra-valor">62,5%</span></div>
+      <div class="barra-linha"><span class="barra-rotulo">comum</span><div class="barra-trilho"><div class="barra" style="width:44.4%"></div></div><span class="barra-valor">44,4%</span></div>
+    </div>
+  </section>
+
+  <section class="cartao">
+    <h2>Valor orçado por mês</h2>
+    <p class="sub">Soma dos orçamentos em cada mês.</p>
+      <div class="colunas">
+        <div class="coluna"><span class="num">R$ 7.987</span><div class="pilar" style="height:72.2%"></div></div>
+        <div class="coluna"><span class="num">R$ 9.405</span><div class="pilar destaque" style="height:85.0%"></div></div>
+        <div class="coluna"><span class="num">R$ 6.200</span><div class="pilar" style="height:56.0%"></div></div>
+      </div>
+      <div class="nomes-meses">
+        <span>Ago/2026</span>
+        <span>Set/2026</span>
+        <span>Out/2026</span>
+      </div>
+  </section>
+
+  <section class="cartao">
+    <h2>Todos os orçamentos</h2>
+    <p class="sub">Área = largura × altura. Valor = área × preço por m².</p>
+    <input id="busca" type="search" placeholder="Buscar por cliente, produto, status..." aria-label="Buscar nos orçamentos">
+    <div class="tabela-rolagem">
+      <table id="tabela">
+        <thead>
+          <tr><th>Nº</th><th>Data</th><th>Cliente</th><th>Produto</th><th>Vidro</th><th class="num">Área (m²)</th><th class="num">Valor</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0001</td><td>03/08/2026</td><td>Cliente A</td><td>Janela</td><td>Comum</td><td class='num'>1,20</td><td class='num'>R$ 216,00</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0002</td><td>05/08/2026</td><td>Cliente B</td><td>Porta</td><td>Temperado</td><td class='num'>1,89</td><td class='num'>R$ 604,80</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0003</td><td>07/08/2026</td><td>Cliente C</td><td>Painel</td><td>Laminado</td><td class='num'>4,80</td><td class='num'>R$ 2.016,00</td><td><span class='selo recusado'>Recusado</span></td></tr>
+          <tr><td>0004</td><td>12/08/2026</td><td>Cliente D</td><td>Janela</td><td>Temperado</td><td class='num'>1,80</td><td class='num'>R$ 576,00</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0005</td><td>14/08/2026</td><td>Cliente E</td><td>Porta</td><td>Comum</td><td class='num'>1,68</td><td class='num'>R$ 302,40</td><td><span class='selo recusado'>Recusado</span></td></tr>
+          <tr><td>0006</td><td>19/08/2026</td><td>Cliente F</td><td>Painel</td><td>Temperado</td><td class='num'>7,50</td><td class='num'>R$ 2.400,00</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0007</td><td>21/08/2026</td><td>Cliente G</td><td>Janela</td><td>Comum</td><td class='num'>1,00</td><td class='num'>R$ 180,00</td><td><span class='selo pendente'>Pendente</span></td></tr>
+          <tr><td>0008</td><td>26/08/2026</td><td>Cliente H</td><td>Porta</td><td>Laminado</td><td class='num'>2,20</td><td class='num'>R$ 924,00</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0009</td><td>28/08/2026</td><td>Cliente I</td><td>Janela</td><td>Temperado</td><td class='num'>2,40</td><td class='num'>R$ 768,00</td><td><span class='selo recusado'>Recusado</span></td></tr>
+          <tr><td>0010</td><td>02/09/2026</td><td>Cliente J</td><td>Painel</td><td>Laminado</td><td class='num'>5,50</td><td class='num'>R$ 2.310,00</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0011</td><td>04/09/2026</td><td>Cliente K</td><td>Janela</td><td>Comum</td><td class='num'>1,32</td><td class='num'>R$ 237,60</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0012</td><td>09/09/2026</td><td>Cliente L</td><td>Porta</td><td>Temperado</td><td class='num'>1,89</td><td class='num'>R$ 604,80</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0013</td><td>11/09/2026</td><td>Cliente M</td><td>Painel</td><td>Comum</td><td class='num'>3,60</td><td class='num'>R$ 648,00</td><td><span class='selo recusado'>Recusado</span></td></tr>
+          <tr><td>0014</td><td>16/09/2026</td><td>Cliente N</td><td>Janela</td><td>Laminado</td><td class='num'>2,08</td><td class='num'>R$ 873,60</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0015</td><td>18/09/2026</td><td>Cliente O</td><td>Porta</td><td>Temperado</td><td class='num'>2,53</td><td class='num'>R$ 809,60</td><td><span class='selo pendente'>Pendente</span></td></tr>
+          <tr><td>0016</td><td>23/09/2026</td><td>Cliente P</td><td>Painel</td><td>Laminado</td><td class='num'>8,32</td><td class='num'>R$ 3.494,40</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0017</td><td>25/09/2026</td><td>Cliente Q</td><td>Janela</td><td>Comum</td><td class='num'>0,48</td><td class='num'>R$ 86,40</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0018</td><td>30/09/2026</td><td>Cliente R</td><td>Porta</td><td>Comum</td><td class='num'>1,89</td><td class='num'>R$ 340,20</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0019</td><td>02/10/2026</td><td>Cliente S</td><td>Janela</td><td>Temperado</td><td class='num'>2,52</td><td class='num'>R$ 806,40</td><td><span class='selo recusado'>Recusado</span></td></tr>
+          <tr><td>0020</td><td>07/10/2026</td><td>Cliente T</td><td>Painel</td><td>Temperado</td><td class='num'>5,28</td><td class='num'>R$ 1.689,60</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0021</td><td>09/10/2026</td><td>Cliente U</td><td>Porta</td><td>Laminado</td><td class='num'>2,10</td><td class='num'>R$ 882,00</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+          <tr><td>0022</td><td>14/10/2026</td><td>Cliente V</td><td>Janela</td><td>Comum</td><td class='num'>1,68</td><td class='num'>R$ 302,40</td><td><span class='selo pendente'>Pendente</span></td></tr>
+          <tr><td>0023</td><td>16/10/2026</td><td>Cliente W</td><td>Painel</td><td>Comum</td><td class='num'>7,00</td><td class='num'>R$ 1.260,00</td><td><span class='selo recusado'>Recusado</span></td></tr>
+          <tr><td>0024</td><td>21/10/2026</td><td>Cliente X</td><td>Janela</td><td>Laminado</td><td class='num'>3,00</td><td class='num'>R$ 1.260,00</td><td><span class='selo aprovado'>Aprovado</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Feito por Paulo Augusto com Python e pandas. Os dados são fictícios.</p>
+  <p style="margin-top:6px">
+    <a href="https://github.com/PauloMellog/analise-orcamentos-esquadrias">Código no GitHub</a> ·
+    <a href="https://www.linkedin.com/in/paulo-augusto-82018723a">LinkedIn</a>
+  </p>
+</footer>
+
+<script>
+  // Filtro da tabela: esconde as linhas que não contêm o texto digitado
+  const busca = document.getElementById("busca");
+  const linhas = document.querySelectorAll("#tabela tbody tr");
+  busca.addEventListener("input", () => {
+    const termo = busca.value.toLowerCase();
+    linhas.forEach(l => {
+      l.style.display = l.textContent.toLowerCase().includes(termo) ? "" : "none";
+    });
+  });
+</script>
+
+</body>
+</html>

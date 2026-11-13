@@ -1,0 +1,95 @@
+/* ============================================================
+   Identidade visual: vidro + alumínio
+   Para trocar o visual do projeto inteiro, mude só estas cores.
+   ============================================================ */
+:root {
+  --azul-escuro: #0B2545;
+  --azul-vidro:  #2F80ED;
+  --aluminio:    #8D99AE;
+  --cinza-claro: #EDF2F4;
+  --branco:      #FFFFFF;
+  --laranja:     #F2994A;
+  --texto:       #1B2733;
+  --texto-suave: #5A6472;
+  --borda:       #D5DBE1;
+  --verde-bg:    #DDF3E4;  --verde-tx: #1E6B3A;
+  --ambar-bg:    #FDEBD3;  --ambar-tx: #8A4B0C;
+  --verm-bg:     #FBE0E0;  --verm-tx:  #8E2A2A;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--cinza-claro);
+  color: var(--texto);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Cabeçalho ---------- */
+.topo { background: var(--azul-escuro); color: var(--branco); padding: 32px 24px; }
+.topo-conteudo { max-width: 980px; margin: 0 auto; display: flex; align-items: center; gap: 18px; }
+.topo svg { flex-shrink: 0; }
+.topo h1 { font-size: 1.6rem; font-weight: 600; line-height: 1.2; }
+.topo p  { color: #B5C7E0; font-size: 0.95rem; margin-top: 4px; }
+
+/* ---------- Layout ---------- */
+main { max-width: 980px; margin: 0 auto; padding: 24px 16px 40px; }
+section { margin-bottom: 24px; }
+.cartao { background: var(--branco); border-radius: 12px; padding: 20px; }
+.cartao h2 { font-size: 1rem; font-weight: 600; color: var(--azul-escuro); margin-bottom: 4px; }
+.cartao .sub { font-size: 0.85rem; color: var(--texto-suave); margin-bottom: 16px; }
+.grade-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+
+/* ---------- Indicadores ---------- */
+.indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.indicador { background: var(--branco); border-radius: 12px; padding: 16px 18px; border-top: 3px solid var(--azul-vidro); }
+.indicador .rotulo { font-size: 0.8rem; color: var(--texto-suave); }
+.indicador .valor  { font-size: 1.7rem; font-weight: 600; color: var(--azul-escuro); line-height: 1.2; }
+.indicador .nota   { font-size: 0.78rem; color: var(--texto-suave); margin-top: 2px; }
+
+/* ---------- Barras horizontais ---------- */
+.barra-linha { display: grid; grid-template-columns: 110px 1fr 120px; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 0.88rem; }
+.barra-trilho { background: var(--cinza-claro); border-radius: 4px; height: 22px; overflow: hidden; }
+.barra { height: 100%; background: var(--azul-vidro); border-radius: 4px; }
+.barra.destaque { background: var(--laranja); }
+.barra-valor { text-align: right; font-weight: 500; }
+.barra-rotulo { text-transform: capitalize; }
+
+/* ---------- Barras verticais (meses) ---------- */
+.colunas { display: flex; align-items: flex-end; justify-content: space-around; gap: 16px; height: 220px; padding-top: 8px; border-bottom: 1px solid var(--borda); }
+.coluna { flex: 1; max-width: 110px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.coluna .num { font-size: 0.82rem; font-weight: 500; margin-bottom: 4px; }
+.coluna .pilar { width: 100%; background: var(--azul-vidro); border-radius: 4px 4px 0 0; }
+.coluna .pilar.destaque { background: var(--laranja); }
+.nomes-meses { display: flex; justify-content: space-around; gap: 16px; padding-top: 6px; font-size: 0.85rem; color: var(--texto-suave); }
+.nomes-meses span { flex: 1; max-width: 110px; text-align: center; }
+
+/* ---------- Conclusões ---------- */
+.conclusoes { list-style: none; }
+.conclusoes li { padding: 10px 0 10px 16px; border-left: 3px solid var(--azul-vidro); margin-bottom: 8px; background: var(--cinza-claro); border-radius: 0 8px 8px 0; font-size: 0.93rem; }
+
+/* ---------- Tabela ---------- */
+.tabela-rolagem { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+th { text-align: left; font-weight: 500; font-size: 0.78rem; color: var(--texto-suave); padding: 8px 10px; border-bottom: 1px solid var(--borda); white-space: nowrap; }
+td { padding: 9px 10px; border-bottom: 1px solid #EEF1F4; white-space: nowrap; }
+td.num, th.num { text-align: right; }
+.selo { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 0.78rem; font-weight: 500; }
+.selo.aprovado { background: var(--verde-bg); color: var(--verde-tx); }
+.selo.pendente { background: var(--ambar-bg); color: var(--ambar-tx); }
+.selo.recusado { background: var(--verm-bg);  color: var(--verm-tx); }
+#busca { width: 100%; max-width: 260px; padding: 7px 12px; border: 1px solid var(--borda); border-radius: 8px; font-size: 0.88rem; margin-bottom: 12px; }
+#busca:focus { outline: 2px solid var(--azul-vidro); border-color: transparent; }
+
+/* ---------- Rodapé ---------- */
+footer { text-align: center; font-size: 0.82rem; color: var(--texto-suave); padding: 0 16px 32px; }
+footer a { color: var(--azul-vidro); text-decoration: none; margin: 0 6px; }
+footer a:hover { text-decoration: underline; }
+
+/* ---------- Celular ---------- */
+@media (max-width: 600px) {
+  .topo h1 { font-size: 1.25rem; }
+  .barra-linha { grid-template-columns: 80px 1fr 90px; font-size: 0.8rem; }
+}

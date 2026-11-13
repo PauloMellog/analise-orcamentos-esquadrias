@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análise de orçamentos de esquadrias</title>
+  <meta name="description" content="Painel de análise de orçamentos de esquadrias feito com Python e pandas.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><rect x='3' y='3' width='34' height='34' fill='%230B2545' stroke='%232F80ED' stroke-width='3'/><line x1='20' y1='3' x2='20' y2='37' stroke='%238D99AE' stroke-width='2'/></svg>">
+  <style>
+$css
+  </style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="topo-conteudo">
+    <svg width="48" height="48" viewBox="0 0 40 40" role="img" aria-label="Logo: esquadria com reflexo de vidro">
+      <rect x="3" y="3" width="34" height="34" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+      <line x1="20" y1="3" x2="20" y2="37" stroke="#8D99AE" stroke-width="2"/>
+      <polygon points="7,31 15,7 19,7 11,31" fill="#2F80ED"/>
+    </svg>
+    <div>
+      <h1>Análise de orçamentos de esquadrias</h1>
+      <p>O que $qtd orçamentos mostram sobre produtos, aprovação e evolução mensal</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="indicadores" aria-label="Indicadores principais">
+    <div class="indicador"><div class="rotulo">Total orçado</div><div class="valor">$total</div><div class="nota">$periodo</div></div>
+    <div class="indicador"><div class="rotulo">Orçamentos</div><div class="valor">$qtd</div><div class="nota">$qtd_pendentes pendentes</div></div>
+    <div class="indicador"><div class="rotulo">Ticket médio</div><div class="valor">$ticket</div><div class="nota">por orçamento</div></div>
+    <div class="indicador"><div class="rotulo">Taxa de aprovação</div><div class="valor">$aprovacao</div><div class="nota">pendentes contam como não aprovados</div></div>
+  </section>
+
+  <section class="cartao">
+    <h2>Principais conclusões</h2>
+    <p class="sub">Geradas automaticamente a partir dos dados.</p>
+    <ul class="conclusoes">
+$conclusoes
+    </ul>
+  </section>
+
+  <section class="grade-2">
+    <div class="cartao">
+      <h2>Valor orçado por produto</h2>
+      <p class="sub">Soma dos orçamentos de cada tipo.</p>
+$grafico_produto
+    </div>
+    <div class="cartao">
+      <h2>Aprovação por tipo de vidro</h2>
+      <p class="sub">% de orçamentos aprovados.</p>
+$grafico_vidro
+    </div>
+  </section>
+
+  <section class="cartao">
+    <h2>Valor orçado por mês</h2>
+    <p class="sub">Soma dos orçamentos em cada mês.</p>
+$grafico_mes
+  </section>
+
+  <section class="cartao">
+    <h2>Todos os orçamentos</h2>
+    <p class="sub">Área = largura × altura. Valor = área × preço por m².</p>
+    <input id="busca" type="search" placeholder="Buscar por cliente, produto, status..." aria-label="Buscar nos orçamentos">
+    <div class="tabela-rolagem">
+      <table id="tabela">
+        <thead>
+          <tr><th>Nº</th><th>Data</th><th>Cliente</th><th>Produto</th><th>Vidro</th><th class="num">Área (m²)</th><th class="num">Valor</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+$linhas
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Feito por Paulo Augusto com Python e pandas. Os dados são fictícios.</p>
+  <p style="margin-top:6px">
+    <a href="https://github.com/PauloMellog/analise-orcamentos-esquadrias">Código no GitHub</a> ·
+    <a href="https://www.linkedin.com/in/paulo-augusto-82018723a">LinkedIn</a>
+  </p>
+</footer>
+
+<script>
+  // Filtro da tabela: esconde as linhas que não contêm o texto digitado
+  const busca = document.getElementById("busca");
+  const linhas = document.querySelectorAll("#tabela tbody tr");
+  busca.addEventListener("input", () => {
+    const termo = busca.value.toLowerCase();
+    linhas.forEach(l => {
+      l.style.display = l.textContent.toLowerCase().includes(termo) ? "" : "none";
+    });
+  });
+</script>
+
+</body>
+</html>
