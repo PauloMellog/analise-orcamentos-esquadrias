@@ -39,5 +39,11 @@ OBS: Os 3 orçamentos pendentes foram contados como não aprovados.
     <em>Valor orçado por mês</em>
 </p>
 
+## Página de resultados
+Para gerar a página com identidade visual (HTML + CSS, abre direto no navegador):
+```bash
+python gerar_relatorio.py
+```
+
 ## Tecnologias
 Python, pandas, matplotlib, Git/GitHub
