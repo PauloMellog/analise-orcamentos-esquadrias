@@ -2,7 +2,6 @@
 
 Mini projeto para treinar análise de dados com Python e pandas, usando um cenário que conheço do meu trabalho: orçamentos de janelas, portas e painéis de vidro/alumínio.
 
-https://paulomellog.github.io/analise-orcamentos-esquadrias/
 
 > Os dados são fictícios.
 
