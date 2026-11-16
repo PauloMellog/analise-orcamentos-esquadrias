@@ -12,7 +12,7 @@ Como rodar:
 import inspect
 
 import streamlit as st
-
+import altair as alt
 import calculos
 import dados
 
@@ -28,6 +28,50 @@ def brl(valor):
 def pct(valor):
     return f"{valor:.1f}".replace(".", ",") + "%"
 
+COR_BARRA = "#4C9AFF"
+COR_TEXTO = "#E6EDF3"
+MESES = ["jan", "fev", "mar", "abr", "mai", "jun",
+         "jul", "ago", "set", "out", "nov", "dez"]
+
+
+def mes_curto(mes):
+    """'2026-09' -> 'set/26'"""
+    return f"{MESES[int(mes[5:7]) - 1]}/{mes[2:4]}"
+
+
+def grafico_barras(serie, formato, horizontal=True):
+    """Gráfico de barras a partir de uma Series do pandas (índice = nome, valor = número)."""
+    tabela = serie.reset_index()
+    tabela.columns = ["categoria", "valor"]
+    tabela["rotulo"] = tabela["valor"].map(formato)
+    limite = [0, (tabela["valor"].max() * 1.25) or 1]  # sobra espaço para o rótulo
+    dica = [alt.Tooltip("categoria:N", title="Item"),
+            alt.Tooltip("rotulo:N", title="Valor")]
+    eixo_texto = alt.Axis(labelColor=COR_TEXTO, labelFontSize=13, ticks=False,
+                          domain=False, labelAngle=0, labelLimit=200)
+
+    if horizontal:
+        base = alt.Chart(tabela).encode(
+            y=alt.Y("categoria:N", sort=None, title=None, axis=eixo_texto),
+            x=alt.X("valor:Q", title=None, axis=None, scale=alt.Scale(domain=limite)),
+        )
+        barras = base.mark_bar(size=24, color=COR_BARRA, cornerRadiusTopRight=4,
+                               cornerRadiusBottomRight=4).encode(tooltip=dica)
+        textos = base.mark_text(align="left", dx=6, fontSize=13,
+                                color=COR_TEXTO).encode(text="rotulo:N")
+        altura = 52 * len(tabela) + 10
+    else:
+        base = alt.Chart(tabela).encode(
+            x=alt.X("categoria:N", sort=None, title=None, axis=eixo_texto),
+            y=alt.Y("valor:Q", title=None, axis=None, scale=alt.Scale(domain=limite)),
+        )
+        barras = base.mark_bar(size=48, color=COR_BARRA, cornerRadiusTopLeft=4,
+                               cornerRadiusTopRight=4).encode(tooltip=dica)
+        textos = base.mark_text(baseline="bottom", dy=-6, fontSize=13,
+                                color=COR_TEXTO).encode(text="rotulo:N")
+        altura = 280
+
+    return (barras + textos).properties(height=altura).configure_view(stroke=None)
 
 @st.cache_data
 def carregar_dados():
@@ -83,13 +127,22 @@ with aba_painel:
         esquerda, direita = st.columns(2)
         with esquerda:
             st.subheader("Valor orçado por produto")
-            st.bar_chart(dados.valor_por_produto(filtrados), color="#2F80ED")
+            st.altair_chart(
+                grafico_barras(dados.valor_por_produto(filtrados).rename(index=str.capitalize), brl),
+                width="stretch",
+            )
         with direita:
-            st.subheader("Aprovação por tipo de vidro (%)")
-            st.bar_chart(dados.aprovacao_por_vidro(filtrados), color="#F2994A")
+            st.subheader("Aprovação por tipo de vidro")
+            st.altair_chart(
+                grafico_barras(dados.aprovacao_por_vidro(filtrados).rename(index=str.capitalize), pct),
+                width="stretch",
+            )
 
         st.subheader("Valor orçado por mês")
-        st.bar_chart(dados.valor_por_mes(filtrados), color="#2F80ED")
+        st.altair_chart(
+            grafico_barras(dados.valor_por_mes(filtrados).rename(index=mes_curto), brl, horizontal=False),
+            width="stretch",
+        )
 
         st.subheader("Orçamentos")
         st.dataframe(
