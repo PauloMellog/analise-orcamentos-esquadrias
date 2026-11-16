@@ -28,7 +28,8 @@ def brl(valor):
 def pct(valor):
     return f"{valor:.1f}".replace(".", ",") + "%"
 
-COR_BARRA = "#4C9AFF"
+COR_BASE = "#4A5F80"
+COR_DESTAQUE = "#4C9AFF"
 COR_TEXTO = "#E6EDF3"
 MESES = ["jan", "fev", "mar", "abr", "mai", "jun",
          "jul", "ago", "set", "out", "nov", "dez"]
@@ -45,6 +46,8 @@ def grafico_barras(serie, formato, horizontal=True):
     tabela.columns = ["categoria", "valor"]
     tabela["rotulo"] = tabela["valor"].map(formato)
     limite = [0, (tabela["valor"].max() * 1.25) or 1]  # sobra espaço para o rótulo
+    cor = alt.condition(alt.datum.valor == tabela["valor"].max(),
+                        alt.value(COR_DESTAQUE), alt.value(COR_BASE))
     dica = [alt.Tooltip("categoria:N", title="Item"),
             alt.Tooltip("rotulo:N", title="Valor")]
     eixo_texto = alt.Axis(labelColor=COR_TEXTO, labelFontSize=13, ticks=False,
@@ -55,8 +58,8 @@ def grafico_barras(serie, formato, horizontal=True):
             y=alt.Y("categoria:N", sort=None, title=None, axis=eixo_texto),
             x=alt.X("valor:Q", title=None, axis=None, scale=alt.Scale(domain=limite)),
         )
-        barras = base.mark_bar(size=24, color=COR_BARRA, cornerRadiusTopRight=4,
-                               cornerRadiusBottomRight=4).encode(tooltip=dica)
+        barras = base.mark_bar(size=24, cornerRadiusTopRight=4,
+                               cornerRadiusBottomRight=4).encode(tooltip=dica, color=cor)
         textos = base.mark_text(align="left", dx=6, fontSize=13,
                                 color=COR_TEXTO).encode(text="rotulo:N")
         altura = 52 * len(tabela) + 10
@@ -65,8 +68,8 @@ def grafico_barras(serie, formato, horizontal=True):
             x=alt.X("categoria:N", sort=None, title=None, axis=eixo_texto),
             y=alt.Y("valor:Q", title=None, axis=None, scale=alt.Scale(domain=limite)),
         )
-        barras = base.mark_bar(size=48, color=COR_BARRA, cornerRadiusTopLeft=4,
-                               cornerRadiusTopRight=4).encode(tooltip=dica)
+        barras = base.mark_bar(size=48, cornerRadiusTopLeft=4,
+                               cornerRadiusTopRight=4).encode(tooltip=dica, color=cor)
         textos = base.mark_text(baseline="bottom", dy=-6, fontSize=13,
                                 color=COR_TEXTO).encode(text="rotulo:N")
         altura = 280
