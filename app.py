@@ -76,6 +76,17 @@ def grafico_barras(serie, formato, horizontal=True):
 
     return (barras + textos).properties(height=altura).configure_view(stroke=None)
 
+CORES_STATUS = {
+    "aprovado": "background-color: #1B5E3A; color: #D7F5E3",
+    "pendente": "background-color: #7A5B12; color: #FFF1CC",
+    "recusado": "background-color: #7A2323; color: #FFE0E0",
+}
+
+
+def pintar_status(valor):
+    """Devolve o estilo (cor de fundo e do texto) para cada status."""
+    return CORES_STATUS.get(valor, "")
+
 @st.cache_data
 def carregar_dados():
     """Lê o CSV uma vez só (o Streamlit guarda o resultado)."""
@@ -148,11 +159,13 @@ with aba_painel:
         )
 
         st.subheader("Orçamentos")
+        tabela_colorida = filtrados[["id", "data", "cliente", "produto", "tipo_vidro",
+                                     "largura_m", "altura_m", "area_m2", "valor",
+                                     "status"]].style.map(pintar_status, subset=["status"])
         st.dataframe(
-            filtrados[["id", "data", "cliente", "produto", "tipo_vidro",
-                       "largura_m", "altura_m", "area_m2", "valor", "status"]],
+            tabela_colorida,
             hide_index=True,
-            use_container_width=True,
+            width="stretch",
             column_config={
                 "id": st.column_config.NumberColumn("Nº", format="%d"),
                 "data": st.column_config.DateColumn("Data", format="DD/MM/YYYY"),
