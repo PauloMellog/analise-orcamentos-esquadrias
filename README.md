@@ -5,7 +5,7 @@ Projeto para treinar análise de dados com Python e pandas, usando um cenário q
 > Os dados são fictícios.
 
 ## Painel interativo
-**Link do painel:** *em breve*
+**Link do painel:** https://orcamentos-esquadrias.streamlit.app
 
 O painel é somente de leitura: os dados vêm do `orcamentos.csv` e ninguém cadastra nem altera nada.
 
